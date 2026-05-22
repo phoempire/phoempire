@@ -1,0 +1,2 @@
+UPDATE public.gallery_images SET grid_class = 'md:col-start-8 md:col-span-4 md:row-start-7 md:row-span-5 aspect-[4/3]' WHERE slot = 5;
+UPDATE public.gallery_images SET grid_class = 'md:col-start-9 md:col-span-4 md:row-start-1 md:row-span-6 aspect-[4/5]' WHERE slot = 3;
