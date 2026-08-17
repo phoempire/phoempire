@@ -41,7 +41,6 @@ export default async function handler(req: any, res: any) {
     await transporter.sendMail({
       from: `"Phở Empire Website" <${process.env.YAHOO_USER}>`,
       to: process.env.CONTACT_TO_EMAIL,
-      replyTo: email,
       subject: `Website inquiry from ${name}`,
       text: textBody,
       html: htmlBody,
