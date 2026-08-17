@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { Home, BookOpen, Camera, Images, UtensilsCrossed, FileText, Sparkles, Star, Building2, LogOut, KeyRound } from "lucide-react";
+import { Home, BookOpen, Camera, Images, UtensilsCrossed, Sparkles, Star, Building2, LogOut, KeyRound } from "lucide-react";
 import { Wordmark } from "@/components/site/Wordmark";
 import HeroTab from "@/components/admin/HeroTab";
 import StoryTab from "@/components/admin/StoryTab";
 import FoodSnapsTab from "@/components/admin/FoodSnapsTab";
 import GalleryTab from "@/components/admin/GalleryTab";
 import MenuTab from "@/components/admin/MenuTab";
-import MenuPdfsTab from "@/components/admin/MenuPdfsTab";
 import LimitedEditionTab from "@/components/admin/LimitedEditionTab";
 import RatingsTab from "@/components/admin/RatingsTab";
 import BusinessInfoTab from "@/components/admin/BusinessInfoTab";
 import AccountTab from "@/components/admin/AccountTab";
 
-type TabKey = "hero" | "story" | "snaps" | "gallery" | "menu" | "menu-pdfs" | "limited" | "ratings" | "business" | "account";
+type TabKey = "hero" | "story" | "snaps" | "gallery" | "menu" | "limited" | "ratings" | "business" | "account";
 
 const NAV: { key: TabKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { key: "hero", label: "Hero", icon: Home },
@@ -23,7 +23,6 @@ const NAV: { key: TabKey; label: string; icon: React.ComponentType<{ className?:
   { key: "snaps", label: "Gallery", icon: Camera },
   { key: "story", label: "Our Story", icon: BookOpen },
   { key: "menu", label: "Menu", icon: UtensilsCrossed },
-  { key: "menu-pdfs", label: "Menu PDFs", icon: FileText },
   { key: "limited", label: "Limited Edition", icon: Sparkles },
   { key: "ratings", label: "Ratings", icon: Star },
   { key: "business", label: "Business Info", icon: Building2 },
@@ -56,12 +55,16 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: "#1A0A05" }}>
+      <Helmet>
+        <title>Admin - Phở Empire</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       <aside
         className="w-64 shrink-0 flex flex-col border-r"
         style={{ backgroundColor: "#1A0A05", borderColor: "rgba(212,160,23,0.2)" }}
       >
         <div className="px-6 py-6 border-b" style={{ borderColor: "rgba(212,160,23,0.2)" }}>
-          <Wordmark className="text-xl" />
+          <Wordmark className="text-xl" style={{ color: "#C0392B" }} ringColor="#1A0A05" />
           <p className="text-[10px] uppercase tracking-[0.3em] mt-1" style={{ color: "rgba(253,246,237,0.5)" }}>Admin</p>
         </div>
         <nav className="flex-1 p-3 space-y-1.5" style={{ backgroundColor: "#2A1208" }}>
@@ -121,7 +124,6 @@ export default function AdminDashboard() {
             {tab === "snaps" && <FoodSnapsTab />}
             {tab === "gallery" && <GalleryTab />}
             {tab === "menu" && <MenuTab />}
-            {tab === "menu-pdfs" && <MenuPdfsTab />}
             {tab === "limited" && <LimitedEditionTab />}
             {tab === "ratings" && <RatingsTab />}
             {tab === "business" && <BusinessInfoTab />}

@@ -1,0 +1,1 @@
+UPDATE public.site_content SET story_pullquote = 'Best Pho in DFW.' WHERE id = 1;

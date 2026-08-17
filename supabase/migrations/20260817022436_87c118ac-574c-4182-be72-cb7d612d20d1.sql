@@ -1,0 +1,1 @@
+update public.site_content set hero_tagline = 'A family-owned Vietnamese kitchen in Irving, TX.' where id = 1;

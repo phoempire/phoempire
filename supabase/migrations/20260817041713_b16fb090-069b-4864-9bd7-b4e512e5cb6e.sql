@@ -1,0 +1,1 @@
+update food_snaps set overlay_text = 'Made fresh, made to order.' where overlay_text = 'Slow-simmered. Never rushed.';

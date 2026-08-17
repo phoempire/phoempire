@@ -1,15 +1,15 @@
-import beefRibPho from "@/assets/beef-rib-pho.jpg";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useReveal } from "@/hooks/use-reveal";
 import { OrderDialog } from "@/components/site/OrderDialog";
 import { supabase } from "@/integrations/supabase/client";
+import { FadeImage } from "@/components/site/FadeImage";
 
 const initial = {
   name: "Beef Rib ",
   description:
-    "A towering braised short rib, slow-simmered until the meat slides off the bone, served over fresh rice noodles in our signature 12-hour beef broth. Finished with Thai basil, scallions, and a squeeze of lime.",
-  availability: "Available while supplies last — ask your server for tonight's count.",
+    "A towering braised short rib, slow-simmered until the meat slides off the bone, served over fresh rice noodles in our signature beef broth. Finished with Thai basil, scallions, and a squeeze of lime.",
+  availability: "Available while supplies last - ask your server for tonight's count.",
   price: "$18.95",
 };
 
@@ -21,7 +21,7 @@ export const LimitedEdition = () => {
   const [description, setDescription] = useState(initial.description);
   const [availability, setAvailability] = useState(initial.availability);
   const [price, setPrice] = useState(initial.price);
-  const [imgSrc, setImgSrc] = useState(beefRibPho);
+  const [imgSrc, setImgSrc] = useState<string>("");
 
   useEffect(() => {
     let cancelled = false;
@@ -34,7 +34,7 @@ export const LimitedEdition = () => {
         if (cancelled || !data) return;
         setAvailable(data.limited_available !== false);
         if (data.limited_name) {
-          // Keep the em "Phở" suffix in the JSX — strip it from the prefix if present.
+          // Keep the em "Phở" suffix in the JSX - strip it from the prefix if present.
           const stripped = data.limited_name.replace(/\s*Phở\s*$/i, "");
           setName(stripped ? stripped + " " : data.limited_name + " ");
         }
@@ -56,14 +56,15 @@ export const LimitedEdition = () => {
       <div className="container grid gap-12 py-24 md:grid-cols-2 md:items-center md:gap-16 md:py-32">
         <div
           ref={left.ref}
-          className={`reveal reveal-left overflow-hidden rounded-sm shadow-warm ${left.visible ? "is-visible" : ""}`}
+          className={`reveal reveal-left relative overflow-hidden rounded-sm shadow-warm ${left.visible ? "is-visible" : ""}`}
         >
-          <img
+          <FadeImage
             src={imgSrc}
             alt="Limited edition beef rib phở with a giant braised short rib bone, fresh herbs, lime, and bean sprouts"
             loading="lazy"
             width={1536}
             height={1024}
+            placeholderClassName="bg-[#2A1208]"
             className="aspect-[4/3] w-full object-cover"
           />
         </div>

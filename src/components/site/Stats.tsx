@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 gsap.registerPlugin(ScrollTrigger);
 
 const initialStats = [
-  { value: 4.8, suffix: " ★", label: "Uber Eats rating", decimals: 1 },
+  { value: 4.7, suffix: " ★", label: "Uber Eats rating", decimals: 1 },
   { value: 4.4, suffix: " ★", label: "Google rating", decimals: 1 },
   { value: 25, suffix: "+", label: "Years in Irving", decimals: 0 },
 ];
@@ -69,9 +69,28 @@ const StatBlock = ({
   const [display, setDisplay] = useState("0");
   const tweenRef = useRef<gsap.core.Tween | null>(null);
   const pendingTriggerRef = useRef<ScrollTrigger | null>(null);
+  const flickerRef = useRef<number | null>(null);
+
+  const stopFlicker = useCallback(() => {
+    if (flickerRef.current !== null) {
+      window.clearInterval(flickerRef.current);
+      flickerRef.current = null;
+    }
+  }, []);
+
+  const startFlicker = useCallback(() => {
+    stopFlicker();
+    const tick = () => {
+      const r = Math.random() * value;
+      setDisplay(r.toFixed(decimals));
+    };
+    tick();
+    flickerRef.current = window.setInterval(tick, 67);
+  }, [value, decimals, stopFlicker]);
 
   const playAnimation = useCallback(() => {
     tweenRef.current?.kill();
+    stopFlicker();
     setDisplay("0");
     const counter = { v: 0 };
     tweenRef.current = gsap.to(counter, {
@@ -81,13 +100,13 @@ const StatBlock = ({
       delay: index * 0.15,
       onUpdate: () => setDisplay(counter.v.toFixed(decimals)),
     });
-  }, [value, decimals, index]);
+  }, [value, decimals, index, stopFlicker]);
 
   const scheduleAnimation = useCallback(() => {
     const el = ref.current;
     if (!el) return;
     tweenRef.current?.kill();
-    setDisplay("0");
+    startFlicker();
     pendingTriggerRef.current?.kill();
     const rect = el.getBoundingClientRect();
     const inView = rect.top < window.innerHeight * 0.8 && rect.bottom > 0;
@@ -101,7 +120,7 @@ const StatBlock = ({
         onEnter: playAnimation,
       });
     }
-  }, [playAnimation]);
+  }, [playAnimation, startFlicker]);
 
   useEffect(() => {
     const el = ref.current;
@@ -117,9 +136,10 @@ const StatBlock = ({
     return () => {
       pendingTriggerRef.current?.kill();
       tweenRef.current?.kill();
+      stopFlicker();
       window.removeEventListener(STATS_REPLAY_EVENT, handleReplay);
     };
-  }, [playAnimation, scheduleAnimation]);
+  }, [playAnimation, scheduleAnimation, stopFlicker]);
 
   return (
     <div ref={ref}>

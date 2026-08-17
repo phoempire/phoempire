@@ -1,18 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import herbs from "@/assets/herbs.jpg";
-import menuPho from "@/assets/menu-pho.jpg";
-import interior from "@/assets/interior.jpg";
 import { supabase } from "@/integrations/supabase/client";
+import { FadeImage } from "@/components/site/FadeImage";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const fallbacks = [herbs, menuPho, interior];
 const initialSnaps = [
-  { src: herbs, text: "Fresh herbs. Every time.", alt: "Fresh herbs and broth" },
-  { src: menuPho, text: "Slow-simmered. Never rushed.", alt: "Bowl of phở" },
-  { src: interior, text: "Irving's table since 2008.", alt: "Restaurant interior" },
+  { src: "", text: "Fresh herbs. Every time.", alt: "Fresh herbs and broth" },
+  { src: "", text: "Made fresh, made to order.", alt: "Bowl of phở" },
+  { src: "", text: "Family-owned since 2001.", alt: "Restaurant interior" },
 ];
 
 export const FoodSnaps = () => {
@@ -29,12 +26,10 @@ export const FoodSnaps = () => {
         if (cancelled || !data || data.length === 0) return;
         setSnaps(
           data.map((row, i) => {
-            const slotIdx = (row.slot ?? i + 1) - 1;
-            const fallback = fallbacks[slotIdx] ?? fallbacks[i] ?? fallbacks[0];
             const src = row.image_path
               ? supabase.storage.from("pho-empire-images").getPublicUrl(row.image_path).data.publicUrl
-              : fallback;
-            return { src: src || fallback, text: row.overlay_text, alt: row.alt };
+              : "";
+            return { src: src || "", text: row.overlay_text, alt: row.alt };
           })
         );
       });
@@ -85,9 +80,10 @@ export const FoodSnaps = () => {
           data-bg="#1A0A05"
           className="relative h-[70vh] md:h-screen w-full overflow-hidden bg-[#1A0A05]"
         >
-          <img
+          <FadeImage
             src={s.src}
             alt={s.alt}
+            placeholderClassName="bg-[#2A1208]"
             className="absolute inset-0 h-full w-full object-cover object-center"
             loading="eager"
             decoding="async"

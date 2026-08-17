@@ -1,12 +1,12 @@
-import interior from "@/assets/interior.jpg";
 import { useEffect, useState } from "react";
 import { useReveal } from "@/hooks/use-reveal";
 import { supabase } from "@/integrations/supabase/client";
+import { FadeImage } from "@/components/site/FadeImage";
 
 const initialBody =
-  "Phở Empire started with one simple belief — that great phở takes time, care, and a family recipe worth sharing. We've been serving Irving, Texas, and every bowl we serve comes from the same recipe we make at home.";
-const initialTagline = "Come hungry. Leave like family.";
-const initialPullquote = "Every bowl starts with 12 hours of patience.";
+  "Phở Empire started with one simple belief - that great phở takes time, care, and a family recipe worth sharing. We've been serving Irving, Texas, and every bowl we serve comes from the same recipe we make at home. We're located in Irving, just a short drive from Las Colinas, Grand Prairie, and Arlington in the DFW area.";
+const initialTagline = "";
+const initialPullquote = "Best Pho in DFW.";
 
 export const Story = () => {
   const left = useReveal<HTMLDivElement>();
@@ -15,7 +15,7 @@ export const Story = () => {
   const [body, setBody] = useState(initialBody);
   const [tagline, setTagline] = useState(initialTagline);
   const [pullquote, setPullquote] = useState(initialPullquote);
-  const [imgSrc, setImgSrc] = useState(interior);
+  const [imgSrc, setImgSrc] = useState<string>("");
 
   useEffect(() => {
     let cancelled = false;
@@ -78,14 +78,15 @@ export const Story = () => {
       <div className="container relative grid gap-16 py-24 md:grid-cols-2 md:items-center md:py-32">
         <div
           ref={left.ref}
-          className={`reveal reveal-left overflow-hidden rounded-sm shadow-warm ${left.visible ? "is-visible" : ""}`}
+          className={`reveal reveal-left relative overflow-hidden rounded-sm shadow-warm ${left.visible ? "is-visible" : ""}`}
         >
-          <img
+          <FadeImage
             src={imgSrc}
             alt="Warm, homey interior of Phở Empire restaurant"
             loading="lazy"
             width={1024}
             height={1280}
+            placeholderClassName="bg-[#EADFD1]"
             className="aspect-[4/5] w-full object-cover"
           />
         </div>
@@ -122,7 +123,7 @@ export const Story = () => {
 
           <div className="mt-8 space-y-5 text-base leading-relaxed text-foreground/75 md:text-lg">
             <p>{body}</p>
-            <p className="font-medium text-foreground">{tagline}</p>
+            {tagline ? <p className="font-medium text-foreground">{tagline}</p> : null}
           </div>
         </div>
       </div>
@@ -140,7 +141,7 @@ export const Story = () => {
             <span className="ml-2 text-gold">”</span>
           </blockquote>
           <figcaption className="mt-6 text-xs uppercase tracking-[0.4em] text-foreground/50">
-            — The Phở Empire kitchen
+            - TripAdvisor review
           </figcaption>
         </figure>
       </div>

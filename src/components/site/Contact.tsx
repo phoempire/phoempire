@@ -11,7 +11,7 @@ const initialHeadlinePrefix = "Catering, parties, ";
 const initialHeadlineEm = "questions.";
 const fullInitialHeadline = `${initialHeadlinePrefix}${initialHeadlineEm}`;
 const initialBody =
-  "Reach us for reservations, menu questions, or catering — call ";
+  "Reach us for reservations, menu questions, or catering - call ";
 const initialPhone = "(972) 594-7259";
 const initialPhoneHref = "tel:+19725947259";
 const initialEmail = "phoempire@yahoo.com";
@@ -58,14 +58,30 @@ export const Contact = () => {
     return () => { cancelled = true; };
   }, []);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      (e.target as HTMLFormElement).reset();
+
+    const form = e.target as HTMLFormElement;
+    const nameVal = (form.elements.namedItem("name") as HTMLInputElement)?.value ?? "";
+    const emailVal = (form.elements.namedItem("email") as HTMLInputElement)?.value ?? "";
+    const partyVal = (form.elements.namedItem("party") as HTMLInputElement)?.value ?? "";
+    const msgVal = (form.elements.namedItem("msg") as HTMLTextAreaElement)?.value ?? "";
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: nameVal, email: emailVal, party: partyVal, message: msgVal }),
+      });
+      if (!res.ok) throw new Error("Failed to send");
+      form.reset();
       toast.success("Cảm ơn! We'll be in touch shortly.");
-    }, 700);
+    } catch {
+      toast.error("Something went wrong - please call or email us directly.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -110,21 +126,21 @@ export const Contact = () => {
         >
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" required placeholder="Your name" className="text-foreground" />
+              <Label htmlFor="name" className="text-foreground">Name</Label>
+              <Input id="name" name="name" required placeholder="Your name" className="text-foreground" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" required placeholder="you@example.com" className="text-foreground" />
+              <Label htmlFor="email" className="text-foreground">Email</Label>
+              <Input id="email" name="email" type="email" required placeholder="you@example.com" className="text-foreground" />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="party">Party / Occasion</Label>
-            <Input id="party" placeholder="Dinner for 8 · Friday 7pm" className="text-foreground" />
+            <Label htmlFor="party" className="text-foreground">Party / Occasion</Label>
+            <Input id="party" name="party" placeholder="Dinner for 8 · Friday 7pm" className="text-foreground" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="msg">Message</Label>
-            <Textarea id="msg" required rows={4} placeholder="Tell us anything we should know" className="text-foreground" />
+            <Label htmlFor="msg" className="text-foreground">Message</Label>
+            <Textarea id="msg" name="msg" required rows={4} placeholder="Tell us anything we should know" className="text-foreground" />
           </div>
           <Button
             type="submit"

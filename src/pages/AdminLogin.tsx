@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Wordmark } from "@/components/site/Wordmark";
@@ -31,12 +32,16 @@ export default function AdminLogin() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: "#1A0A05" }}>
+      <Helmet>
+        <title>Admin Login - Phở Empire</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       <div
         className="w-full max-w-sm rounded-md p-8 border"
         style={{ backgroundColor: "#2A1208", borderColor: "rgba(212,160,23,0.25)" }}
       >
         <div className="text-center mb-8">
-          <Wordmark className="text-3xl" />
+          <Wordmark className="text-3xl" style={{ color: "#C0392B" }} ringColor="#2A1208" />
           <p className="mt-2 text-xs uppercase tracking-[0.3em]" style={{ color: "rgba(253,246,237,0.6)" }}>Admin</p>
         </div>
 

@@ -6,7 +6,7 @@ import { platformList, formatCountApprox, fetchRatingsFromDB, type Platform } fr
 const reviews = [
   {
     quote:
-      "The broth is unlike anything I've had outside of Vietnam. We come every Sunday — it's our family tradition now.",
+      "The broth is unlike anything I've had outside of Vietnam. We come every Sunday - it's our family tradition now.",
     name: "Linh T.",
     location: "Irving, TX",
   },
@@ -35,9 +35,6 @@ export const Reviews = () => {
     });
     return () => { cancelled = true; };
   }, []);
-
-  const totalReviews = list.reduce((sum, p) => sum + p.count, 0);
-  const totalRoundedDown = Math.floor(totalReviews / 100) * 100;
 
   return (
     <section
@@ -80,10 +77,6 @@ export const Reviews = () => {
           {reviews.map((r, i) => (
             <ReviewCard key={r.name} review={r} index={i} />
           ))}
-        </div>
-
-        <div className="mt-12 text-center text-sm tracking-wide text-gold">
-          {totalRoundedDown.toLocaleString()}+ total reviews from real customers
         </div>
       </div>
     </section>

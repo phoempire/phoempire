@@ -1,12 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import menuPho from "@/assets/menu-pho.jpg";
-import menuBun from "@/assets/menu-bun.jpg";
-import menuBanhMi from "@/assets/menu-banhmi.jpg";
-import menuGoiCuon from "@/assets/menu-goicuon.jpg";
-import menuCom from "@/assets/menu-com.jpg";
 import { supabase } from "@/integrations/supabase/client";
+import { FadeImage } from "@/components/site/FadeImage";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -26,41 +22,40 @@ type Tile = {
   rotate?: string;
 };
 
-const fallbackImages = [menuPho, menuBun, menuBanhMi, menuGoiCuon, menuCom];
 const initialTiles: Tile[] = [
   {
-    src: menuPho,
-    alt: "Phở Empire — steaming bowl with eye-of-round, flank, tendon and meatballs",
+    src: "",
+    alt: "Phở Empire - steaming bowl with eye-of-round, flank, tendon and meatballs",
     caption: "Phở Empire",
     className:
       "md:col-start-1 md:col-span-4 md:row-start-1 md:row-span-6 aspect-[4/5]",
     rotate: "-rotate-2",
   },
   {
-    src: menuBun,
-    alt: "Bún Đặc Biệt — vermicelli combo with grilled meats and egg roll",
+    src: "",
+    alt: "Bún Đặc Biệt - vermicelli combo with grilled meats and egg roll",
     caption: "Bún Đặc Biệt",
     className:
       "md:col-start-5 md:col-span-4 md:row-start-2 md:row-span-4 aspect-[4/3]",
   },
   {
-    src: menuBanhMi,
-    alt: "Bánh Mì — crispy French bread with grilled pork and pickled vegetables",
+    src: "",
+    alt: "Bánh Mì - crispy French bread with grilled pork and pickled vegetables",
     caption: "Bánh Mì",
     className:
       "md:col-start-9 md:col-span-4 md:row-start-1 md:row-span-6 aspect-[4/5]",
     rotate: "rotate-2",
   },
   {
-    src: menuGoiCuon,
-    alt: "Gỏi Cuốn — fresh spring rolls with shrimp and peanut sauce",
+    src: "",
+    alt: "Gỏi Cuốn - fresh spring rolls with shrimp and peanut sauce",
     caption: "Gỏi Cuốn",
     className:
       "md:col-start-3 md:col-span-4 md:row-start-7 md:row-span-5 aspect-[4/3]",
   },
   {
-    src: menuCom,
-    alt: "Cơm Empire — combo steamed rice with grilled pork chop, chicken and fried egg",
+    src: "",
+    alt: "Cơm Empire - combo steamed rice with grilled pork chop, chicken and fried egg",
     caption: "Cơm Empire",
     className:
       "md:col-start-8 md:col-span-4 md:row-start-7 md:row-span-5 aspect-[4/3]",
@@ -82,14 +77,12 @@ export const Gallery = () => {
         if (cancelled || !data || data.length === 0) return;
         setTiles(
           data.map((row, i) => {
-            const slotIdx = (row.slot ?? i + 1) - 1;
-            const fallback = fallbackImages[slotIdx] ?? fallbackImages[i] ?? fallbackImages[0];
-            let src = fallback;
+            let src = "";
             if (row.src_path) {
               if (row.src_path.startsWith("http")) src = row.src_path;
               else {
                 const url = supabase.storage.from("pho-empire-images").getPublicUrl(row.src_path).data.publicUrl;
-                src = url || fallback;
+                src = url || "";
               }
             }
             return {
@@ -165,7 +158,7 @@ export const Gallery = () => {
 
         <div className="mx-auto mt-16 grid max-w-6xl grid-cols-1 gap-6 md:auto-rows-[60px] md:grid-cols-12">
           {tiles.map((t, i) => (
-            <GalleryTile key={t.src} tile={t} index={i} total={tiles.length} />
+            <GalleryTile key={`${i}-${t.caption}`} tile={t} index={i} total={tiles.length} />
           ))}
         </div>
       </div>
@@ -250,11 +243,12 @@ const GalleryTile = ({ tile, index, total }: { tile: Tile; index: number; total:
       <div
         className={`relative h-full w-full overflow-hidden rounded-sm shadow-card transition-all duration-500 ease-out group-hover:scale-[1.04] group-hover:shadow-warm ${tile.rotate ?? ""}`}
       >
-        <img
+        <FadeImage
           src={tile.src}
           alt={tile.alt}
           loading="eager"
           decoding="async"
+          placeholderClassName="bg-[#2A1208]"
           className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
       </div>

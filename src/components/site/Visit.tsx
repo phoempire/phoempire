@@ -10,7 +10,7 @@ const initialAddressTitle = "3591 N. Belt Line Rd";
 const initialAddressSub = "Irving, TX 75062";
 const initialPhone = "(972) 594-7259";
 const initialPhoneHref = "tel:+19725947259";
-const initialHoursSub = "Sunday – Saturday · 11:00 am – 9:00 pm";
+const initialHoursSub = "11:00 am – 9:00 pm";
 
 const phoneToHref = (p: string) => `tel:${p.replace(/[^\d+]/g, "")}`;
 
@@ -43,7 +43,14 @@ export const Visit = () => {
           setPhone(data.phone);
           setPhoneHref(phoneToHref(data.phone));
         }
-        if (data.hours) setHoursSub(data.hours);
+        if (data.hours) {
+          setHoursSub(
+            data.hours
+              .replace(/sunday\s*[–-]\s*saturday\s*·?\s*/i, "")
+              .replace(/^open daily\s*·?\s*/i, "")
+              .trim()
+          );
+        }
       });
     fetchRatingsFromDB().then((rows) => {
       if (cancelled || !rows) return;
@@ -68,7 +75,7 @@ export const Visit = () => {
             Come <em className="text-accent">sit</em> with us.
           </h2>
           <p className="mt-6 text-muted-foreground italic">
-            We're on N. Belt Line Rd in Irving — open seven days a week for
+            We're on N. Belt Line Rd in Irving - open seven days a week for
             lunch, dinner, takeout, and catering.
           </p>
 
@@ -104,7 +111,7 @@ export const Visit = () => {
                 icon: Star,
                 title: (
                   <a
-                    href="https://www.google.com/maps/place/Pho+Empire/@32.8852,-96.9619,17z/data=!4m8!3m7!1s0x864e827b3c3f5555:0x1!8m2!3d32.8852!4d-96.9619!9m1!1b1"
+                    href="https://www.google.com/maps/search/?api=1&query=Pho+Empire+Irving+TX"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-medium hover:text-accent transition-smooth"
@@ -149,7 +156,7 @@ export const Visit = () => {
           style={{ transitionDelay: "0.15s" }}
         >
           <iframe
-            title="Phở Empire — 3591 N Belt Line Rd, Irving, TX"
+            title="Phở Empire - 3591 N Belt Line Rd, Irving, TX"
             src="https://www.google.com/maps?q=3591+N+Belt+Line+Rd,+Irving,+TX+75062&output=embed"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"

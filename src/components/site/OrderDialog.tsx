@@ -12,6 +12,7 @@ import uberEatsLogo from "@/assets/logos/ubereats.png";
 import doorDashLogo from "@/assets/logos/doordash.png";
 import grubhubLogo from "@/assets/logos/grubhub.png";
 import { platforms, formatCountApprox } from "@/data/ratings";
+import { Wordmark } from "@/components/site/Wordmark";
 
 const deliverySub = (key: "ubereats" | "doordash" | "grubhub") => {
   const p = platforms[key];
@@ -68,10 +69,13 @@ export const OrderDialog = ({ trigger }: OrderDialogProps) => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-serif text-2xl">
-            Order from <em className="text-accent">Phở Empire</em>
+            <span className="inline-flex items-baseline gap-2">
+              <span>Order from</span>
+              <Wordmark className="text-accent text-xl" ringColor="#FDF6EC" />
+            </span>
           </DialogTitle>
           <DialogDescription>
-            Choose where you'd like to order — direct pickup or your favorite
+            Choose where you'd like to order - direct pickup or your favorite
             delivery app.
           </DialogDescription>
         </DialogHeader>

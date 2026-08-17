@@ -37,7 +37,16 @@ export const Navbar = () => {
   const visibleLinks = links.filter((l) => l.id !== "limited" || limitedAvailable === true);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
+      const first = document.getElementById(links[0].id);
+      if (first) {
+        const firstTop = first.getBoundingClientRect().top + window.scrollY;
+        if (window.scrollY + window.innerHeight * 0.55 < firstTop) {
+          setActive("");
+        }
+      }
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);

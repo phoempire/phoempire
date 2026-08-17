@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    /* Pho Empire — warm, family-owned Vietnamese kitchen */
+    /* Pho Empire - warm, family-owned Vietnamese kitchen */
     --background: 37 86% 96%;          /* warm cream #FDF6ED */
     --foreground: 15 68% 8%;            /* deep charcoal */
 
@@ -42,7 +42,7 @@
 
     --radius: 0.25rem;
 
-    --gradient-hero: linear-gradient(180deg, hsl(15 68% 6% / 0.35) 0%, hsl(15 70% 4% / 0.92) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(15 68% 6% / 0.35) 0%, hsl(15 70% 4% / 0.4) 55%, hsl(15 70% 4% / 0) 85%);
     --gradient-spice: linear-gradient(135deg, hsl(6 63% 46%), hsl(44 81% 46%));
     --gradient-warm: radial-gradient(ellipse at top, hsl(37 90% 97%) 0%, hsl(33 55% 90%) 100%);
     --shadow-warm: 0 30px 80px -20px hsl(6 60% 20% / 0.35);
@@ -98,6 +98,7 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "ss01", "cv11";
+    overflow-x: clip;
   }
 
   h1, h2, h3, h4 {
@@ -148,6 +149,12 @@
   }
   .animate-pulse-dot { animation: pulse-dot 2.4s ease-in-out infinite; }
 
+  @keyframes scroll-blink {
+    0%, 100% { opacity: 0.3; transform: translate(-50%, 0); }
+    50% { opacity: 1; transform: translate(-50%, 4px); }
+  }
+  .animate-scroll-blink { animation: scroll-blink 2s ease-in-out infinite; }
+
   @keyframes soft-pulse {
     0%, 92%, 100% { box-shadow: 0 0 0 0 hsl(var(--gold) / 0); }
     94% { box-shadow: 0 0 0 0 hsl(var(--gold) / 0.5); }
@@ -155,7 +162,7 @@
   }
   .animate-soft-pulse { animation: soft-pulse 8s ease-out infinite; }
 
-  /* Scroll reveal — pair with .is-visible toggle */
+  /* Scroll reveal - pair with .is-visible toggle */
   .reveal {
     opacity: 0;
     transform: translateY(28px);

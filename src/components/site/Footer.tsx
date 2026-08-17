@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { MapPin, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { platforms, formatCountApprox, fetchRatingsFromDB } from "@/data/ratings";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,7 +42,8 @@ export const Footer = () => {
           setEmailHref(`mailto:${data.email}`);
         }
         if (data.hours) {
-          setHours(/^open/i.test(data.hours) ? data.hours : `Open daily · ${data.hours}`);
+          const stripped = data.hours.replace(/sunday\s*[–-]\s*saturday\s*·?\s*/i, "").trim();
+          setHours(/^open/i.test(stripped) ? stripped : `Open daily · ${stripped}`);
         }
       });
     fetchRatingsFromDB().then((rows) => {
@@ -64,8 +65,9 @@ export const Footer = () => {
       <div className="container flex flex-col items-center gap-8 py-14 md:flex-row md:items-start md:justify-between">
         <div className="text-center md:text-left">
           <Wordmark className="text-2xl text-primary-foreground" />
-          <p className="mt-2 text-sm text-primary-foreground/50">
-            {address}
+          <p className="mt-2 flex items-center justify-center gap-1.5 text-sm text-primary-foreground/50 md:justify-start">
+            <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            <span>{address}</span>
           </p>
           <p className="mt-1 text-sm text-primary-foreground/50">
             <a

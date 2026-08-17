@@ -44,15 +44,15 @@ export const platforms: Record<PlatformKey, Platform> = {
   ubereats: {
     key: "ubereats",
     name: "Uber Eats",
-    rating: 4.8,
-    count: 900,
+    rating: 4.7,
+    count: 1000,
     href: "https://www.ubereats.com/store/pho-empire-irving/MVWD2k0nV7yY8gKNz69gWQ",
   },
   doordash: {
     key: "doordash",
     name: "DoorDash",
     rating: 4.7,
-    count: 500,
+    count: 1000,
     href: "https://www.doordash.com/store/pho-empire-irving-28013554/",
   },
   grubhub: {

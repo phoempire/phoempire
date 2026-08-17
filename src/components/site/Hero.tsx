@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Button } from "@/components/ui/button";
-import heroPho from "@/assets/hero-pho.jpg";
+import { FadeImage } from "@/components/site/FadeImage";
 import { OrderDialog } from "@/components/site/OrderDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Wordmark } from "@/components/site/Wordmark";
@@ -10,22 +10,29 @@ import { Wordmark } from "@/components/site/Wordmark";
 gsap.registerPlugin(ScrollTrigger);
 
 const initialStoryLines = [
-  "12 hours of simmering.",
-  "One family recipe.",
-  "Every single bowl.",
+  "Pho, bánh mì, vermicelli & more.",
+  "Made fresh, made to order.",
+  "Dine in, takeout, or order online.",
 ];
-const initialTagline =
-  "A fast-casual Vietnamese kitchen in Irving, Texas — serving phở, rice, and vermicelli the way it should taste.";
+const initialTagline = "A family-owned Vietnamese kitchen in Irving, TX.";
+
+const initialPhone = "(972) 594-7259";
+const initialHours = "11:00 am – 9:00 pm";
+const phoneToHref = (p: string) => `tel:${p.replace(/[^\d+]/g, "")}`;
 
 export const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const imgWrapRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
   const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [storyLines, setStoryLines] = useState<string[]>(initialStoryLines);
   const [tagline, setTagline] = useState<string>(initialTagline);
-  const [imgSrc, setImgSrc] = useState<string>(heroPho);
+  const [imgSrc, setImgSrc] = useState<string>("");
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const [phone, setPhone] = useState(initialPhone);
+  const [hours, setHours] = useState(initialHours);
 
   useEffect(() => {
     const t = setTimeout(() => setImgLoaded(true), 600);
@@ -51,18 +58,41 @@ export const Hero = () => {
           if (url) setImgSrc(url);
         }
       });
+    supabase
+      .from("site_content")
+      .select("phone,hours")
+      .eq("id", 1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (cancelled || !data) return;
+        if (data.phone) setPhone(data.phone);
+        if (data.hours) {
+          // Strip leading day text like "Sunday – Saturday ·" or "Open daily ·"
+          const timeOnly = data.hours
+            .replace(/^open[^·\-—\n]*[·\-—\n]\s*/i, "")
+            .replace(/^[A-Za-z]+\s*[–\-—]\s*[A-Za-z]+\s*[·\-—\n]\s*/i, "")
+            .replace(/^[A-Za-z]+\s*[·\-—\n]\s*/i, "")
+            .trim();
+          setHours(timeOnly);
+        }
+      });
     return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
+    if (reduce) {
+      setReduceMotion(true);
+      return;
+    }
     const ctx = gsap.context(() => {
       const section = sectionRef.current!;
       const total = section.offsetHeight;
 
-      gsap.to(imgWrapRef.current!.querySelector("img"), {
-        scale: 1.06,
+      gsap.fromTo(imgRef.current, {
+        scale: 1.04,
+      }, {
+        scale: 1.11,
         ease: "none",
         scrollTrigger: { trigger: section, start: "top top", end: "bottom top", scrub: true },
       });
@@ -139,35 +169,38 @@ export const Hero = () => {
       ref={sectionRef}
       id="top"
       data-bg="#1A0A05"
-      className="relative h-[520vh] w-full bg-[#1A0A05]"
+      className="relative h-[520vh] w-full [overflow-x:clip] bg-[#1A0A05]"
     >
-      {/* Sticky image — pinned for the full section height (520vh) */}
+      {/* Sticky image - pinned for the full section height (520vh) */}
       <div
         ref={imgWrapRef}
-        className="sticky top-0 h-[100svh] w-full overflow-hidden"
+        className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-[#1A0A05]"
         style={{ zIndex: 0 }}
       >
-        <img
+        <FadeImage
+          imgRef={imgRef}
           src={imgSrc}
           alt="Steaming bowl of Vietnamese phở with rare beef, rice noodles, and fresh herbs"
-          className="absolute inset-0 h-full w-full object-cover"
+          placeholderClassName="bg-[#2A1208]"
+          className="absolute inset-0 h-full w-full scale-[1.04] object-cover object-center"
+          style={{ transformOrigin: "center center" }}
           width={1920}
           height={1080}
-          onLoad={() => setImgLoaded(true)}
+          onImageLoad={() => setImgLoaded(true)}
           loading="eager"
           // @ts-ignore
           fetchpriority="high"
         />
-        <div className="absolute inset-0 bg-gradient-hero opacity-80" />
-        {/* Phase 2: story lines — pinned with the image */}
-        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-hero opacity-70" />
+        {/* Phase 2: story lines - pinned with the image */}
+        <div className={`absolute inset-0 z-10 flex items-center justify-center pointer-events-none ${reduceMotion ? "flex-col gap-6" : ""}`}>
           {storyLines.map((text, i) => (
             <div
               key={i}
               ref={(el) => {
                 lineRefs.current[i] = el;
               }}
-              style={{ position: "absolute", opacity: 0 }}
+              style={reduceMotion ? { opacity: 1 } : { position: "absolute", opacity: 0 }}
               className="font-serif italic text-white text-[36px] md:text-[64px] leading-tight text-center max-w-4xl px-6"
             >
               {text}
@@ -176,12 +209,12 @@ export const Hero = () => {
         </div>
       </div>
 
-      {/* Phase 1: headline — absolute over first 100vh */}
+      {/* Phase 1: headline - absolute over first 100vh */}
       <div
-        className="absolute inset-x-0 top-0 h-[100svh] z-10 flex flex-col items-center justify-center px-6 text-center text-primary-foreground pointer-events-none transition-opacity duration-500"
+        className="absolute inset-x-0 top-0 h-[100dvh] z-10 flex max-w-full flex-col items-center justify-center overflow-hidden px-6 text-center text-primary-foreground pointer-events-none transition-opacity duration-500"
         style={{ opacity: imgLoaded ? 1 : 0 }}
       >
-        <div ref={headlineRef} className="pointer-events-auto flex flex-col items-center">
+        <div ref={headlineRef} className="pointer-events-auto flex w-full max-w-full flex-col items-center">
           <span
             className="mb-6 inline-flex items-center gap-3 text-xs uppercase tracking-[0.4em] text-gold animate-fade-up"
             style={{ animationDuration: "0.6s" }}
@@ -200,10 +233,10 @@ export const Hero = () => {
           </span>
 
           <h1
-            className="max-w-4xl text-balance leading-[1.05] animate-fade-up text-primary-foreground"
+            className="w-full max-w-4xl text-balance leading-[1.05] animate-fade-up text-primary-foreground"
             style={{ animationDuration: "0.6s", animationDelay: "0.2s" }}
           >
-            <Wordmark className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl" />
+            <Wordmark className="max-w-full text-3xl min-[420px]:text-4xl sm:text-6xl md:text-7xl lg:text-8xl" />
             <span className="mt-3 block font-display tracking-[0.08em] text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-primary-foreground">
               NOODLE &amp; GRILL
             </span>
@@ -242,10 +275,19 @@ export const Hero = () => {
         </div>
 
         <div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs uppercase tracking-[0.3em] text-primary-foreground/60"
+          className="absolute bottom-20 left-1/2 text-[10px] uppercase tracking-[0.35em] text-primary-foreground animate-scroll-blink"
+          style={{ transform: "translateX(-50%)" }}
           aria-hidden
         >
           Scroll ↓
+        </div>
+
+        <div className="pointer-events-auto absolute bottom-8 left-0 right-0 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 text-center text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.22em] text-primary-foreground/55">
+          <a href={phoneToHref(phone)} className="hover:text-primary-foreground/90 transition-colors whitespace-nowrap">
+            {phone}
+          </a>
+          <span className="hidden sm:inline-block h-1 w-1 rounded-full bg-primary-foreground/40" aria-hidden />
+          <span className="whitespace-nowrap">{hours}</span>
         </div>
       </div>
     </section>
